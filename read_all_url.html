@@ -9,7 +9,7 @@
 <script>
 
     pefinite.ready(function (){
-       pefinite.ajax("http://localhost/english_bangla.com(English to Bangla)/read_url_data.php", "https://www.english-bangla.com/browse").post(function (data){
+       pefinite.ajax("http://localhost/https-www.english-bangla.com-browse/read_url_data.php", "https://www.english-bangla.com/browse").post(function (data){
             data = (new DOMParser().parseFromString(data, "text/html"));
             data = data.getElementsByClassName("a-z")[0].getElementsByTagName("a");
             for (let x = 0; x < data.length; x++) {
@@ -20,7 +20,7 @@
 
     function readEachLetterAllWords(url) {
         let nexUrl = null;
-        pefinite.ajax("http://localhost/english_bangla.com(English to Bangla)/read_url_data.php", url).syncPost(function (data){
+        pefinite.ajax("http://localhost/https-www.english-bangla.com-browse/read_url_data.php", url).syncPost(function (data){
             data = (new DOMParser().parseFromString(data, "text/html"));
             let pagination = data.getElementsByClassName("pagination");
             data = data.getElementById("cat_page").getElementsByTagName("ul")[0].getElementsByTagName("a");
@@ -37,10 +37,20 @@
         if(nexUrl) readEachLetterAllWords(nexUrl);
     }
     function readEachWord(uri) {
-        pefinite.ajax("http://localhost/english_bangla.com(English to Bangla)/read_url_data.php", uri).syncPost(function (data){
+        pefinite.ajax("http://localhost/https-www.english-bangla.com-browse/read_url_data.php", uri).syncPost(function (data){
             data = (new DOMParser().parseFromString(data, "text/html"));
-            data = data.getElementById("w_info");
             let details = {};
+            details['image'] = "";
+            let image = data.getElementsByClassName('suggested');
+            if(image.length) {
+                for (let z = 0; z < image.length; z++) {
+                    let searchImage = image[z].getElementsByTagName("img");
+                    if(searchImage.length) {
+                        details['image'] = searchImage[0].src;
+                    }
+                }
+            }
+            data = data.getElementById("w_info");
             details['word'] = (data.getElementsByClassName("word")[0].innerHTML).toLowerCase().trim();
             let pronunciation = data.getElementsByClassName("prnc");
             details['pronunciation'] = "";
@@ -91,7 +101,7 @@
                         break;
                 }
             }
-            pefinite.ajax("http://localhost/english_bangla.com(English to Bangla)/post_all_word.php", JSON.stringify(details)).syncPost();
+            pefinite.ajax("http://localhost/https-www.english-bangla.com-browse/post_all_word.php", JSON.stringify(details)).syncPost();
         });
     }
 
